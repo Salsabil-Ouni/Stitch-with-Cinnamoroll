@@ -1,6 +1,28 @@
 (() => {
   const LEVELS = window.STITCH_LEVELS;
-  const SYMBOLS = ['●', '♥', '■', '▲', '◆', '★', '✿'];
+  // guide symbols are drawn as shapes, not text, so phones never swap them for colored emoji
+  const SYMBOL_PATHS = [
+    'M4 12a8 8 0 1 0 16 0a8 8 0 1 0 -16 0z',
+    'M12 20.5C5 15 3.5 11.5 3.5 8.6 3.5 6 5.5 4 8 4c1.7 0 3.2 1 4 2.4C12.8 5 14.3 4 16 4c2.5 0 4.5 2 4.5 4.6 0 2.9-1.5 6.4-8.5 11.9z',
+    'M5 5h14v14H5z',
+    'M12 4l8.5 15h-17z',
+    'M12 3l8 9-8 9-8-9z',
+    'M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z',
+    'M12 3c.8 5 4 8.2 9 9-5 .8-8.2 4-9 9-.8-5-4-8.2-9-9 5-.8 8.2-4 9-9z',
+  ];
+  const SYMBOL_2D = SYMBOL_PATHS.map(d => new Path2D(d));
+  function drawSymbol(c2, i, cx, cy, size, color) {
+    c2.save();
+    c2.translate(cx - size / 2, cy - size / 2);
+    c2.scale(size / 24, size / 24);
+    c2.fillStyle = color;
+    c2.fill(SYMBOL_2D[i % SYMBOL_2D.length]);
+    c2.restore();
+  }
+  function symbolSvg(i, size) {
+    return '<svg viewBox="0 0 24 24" width="' + size + '" height="' + size + '" fill="currentColor" aria-hidden="true"><path d="' +
+      SYMBOL_PATHS[i % SYMBOL_PATHS.length] + '"/></svg>';
+  }
   const PROGRESS_KEY = 'cinna-stitch-v2';
   const UNLOCK_KEY = 'cinna-stitch-unlocked';
   const SFX_KEY = 'cinna-stitch-sfx';
@@ -318,7 +340,7 @@
       const b = document.createElement('button');
       b.className = 'swatch' + (i === current ? ' active' : '') + (left === 0 ? ' finished' : '');
       b.innerHTML =
-        '<span class="dot" style="background:' + t.color + '">' + SYMBOLS[i % SYMBOLS.length] + '</span>' +
+        '<span class="dot" style="background:' + t.color + '">' + symbolSvg(i, 12) + '</span>' +
         t.name + ' (' + left + ')';
       b.addEventListener('click', () => { current = i; wrongStreak = 0; updateNeedle(); buildPalette(); draw(); });
       paletteEl.appendChild(b);
@@ -395,8 +417,8 @@
         }
         drawStitchOn(ctx, CELL, r, c, level.palette[idx].color, scale);
       } else if (showGuide) {
-        ctx.fillStyle = idx === current ? 'rgba(91,127,166,0.75)' : 'rgba(91,127,166,0.28)';
-        ctx.fillText(SYMBOLS[idx % SYMBOLS.length], c * CELL + CELL / 2, r * CELL + CELL / 2 + 1);
+        drawSymbol(ctx, idx, c * CELL + CELL / 2, r * CELL + CELL / 2, CELL * 0.5,
+          idx === current ? 'rgba(91,127,166,0.75)' : 'rgba(91,127,166,0.28)');
       }
     });
 
@@ -418,8 +440,7 @@
       ctx.beginPath();
       ctx.arc(c * CELL + CELL / 2, r * CELL + CELL / 2, CELL * (0.75 + 0.35 * pulse), 0, Math.PI * 2);
       ctx.stroke();
-      ctx.fillStyle = 'rgba(91,127,166,0.9)';
-      ctx.fillText(SYMBOLS[idx % SYMBOLS.length], c * CELL + CELL / 2, r * CELL + CELL / 2 + 1);
+      drawSymbol(ctx, idx, c * CELL + CELL / 2, r * CELL + CELL / 2, CELL * 0.5, 'rgba(91,127,166,0.9)');
       animating = true;
     } else if (hintCell) {
       hintCell = null;
