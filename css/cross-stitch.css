@@ -154,12 +154,12 @@ button:hover { background: #ff5fa5; }
 }
 .intro-gif { width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 4px solid #bfe3ff; animation: introBob 3s ease-in-out infinite; }
 .intro-title { font-family: 'Press Start 2P', monospace; font-size: 1.3rem; line-height: 1.6; color: #ff7eb6; text-shadow: 3px 3px 0 #fff; margin: 14px 0 8px; }
-.intro-sub { font-weight: 600; margin-bottom: 18px; }
-.intro-play { display: block; margin: 0 auto 10px; padding: 12px 54px; font-size: 1.2rem; box-shadow: 0 5px 0 #d9548f; animation: introPulse 1.6s ease-in-out infinite; }
+.intro-sub { font-weight: 600; margin-bottom: 28px; }
+.intro-play { display: block; margin: 0 auto 20px; padding: 12px 54px; font-size: 1.2rem; box-shadow: 0 5px 0 #d9548f; animation: introPulse 1.6s ease-in-out infinite; }
 .intro-play:active { transform: translateY(3px); box-shadow: 0 2px 0 #d9548f; }
-.intro-how { background: none; color: #5b7fa6; text-decoration: underline; padding: 4px 10px; }
+.intro-how { background: none; color: #5b7fa6; text-decoration: underline; padding: 8px 16px; }
 .intro-how:hover { background: none; color: #ff7eb6; }
-.intro-steps { text-align: left; margin: 10px auto 0; padding-left: 22px; font-weight: 600; line-height: 1.7; }
+.intro-steps { text-align: left; margin: 14px auto 0; padding-left: 22px; font-weight: 600; line-height: 1.7; }
 .intro-steps[hidden] { display: none; }
 .intro-cloud { position: absolute; background: #fff; border-radius: 99px; opacity: 0.8; animation: introDrift 30s linear infinite; }
 .intro-cloud::before, .intro-cloud::after { content: ''; position: absolute; background: #fff; border-radius: 50%; }
@@ -288,3 +288,6 @@ button:hover { background: #ff5fa5; }
 .chip .slash { display: none; }
 .chip.off .slash { display: block; }
 .chip.armed { background: #ffe3f1; color: #d9548f; border-color: #ff9ec4; }
+
+.intro-made { margin-top: 24px; font-family: 'Pacifico', cursive; font-size: 1rem; color: #5b7fa6; }
+.intro-made span { display: inline-block; font-size: 1.25em; color: #ff7eb6; animation: introBob 3s ease-in-out infinite; }
