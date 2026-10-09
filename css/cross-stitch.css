@@ -6,6 +6,7 @@ body {
   align-items: center;
   justify-content: center;
   background: linear-gradient(180deg, #e8f4ff 0%, #ffeaf4 100%);
+  background-attachment: fixed;
   font-family: 'Nunito', sans-serif;
   color: #5b7fa6;
   user-select: none;
@@ -15,6 +16,7 @@ body {
   position: fixed;
   top: 16px;
   left: 20px;
+  z-index: 3;
   color: #5b7fa6;
   font-weight: 800;
   text-decoration: none;
@@ -22,6 +24,7 @@ body {
 .back:hover { color: #ff7eb6; }
 
 .wrap { text-align: center; padding: 16px; }
+.wrap[hidden] { display: none; }
 
 h1 {
   font-family: 'Press Start 2P', monospace;
@@ -30,12 +33,21 @@ h1 {
   text-shadow: 3px 3px 0 #fff;
   margin-bottom: 8px;
 }
+h2 { font-size: 1.1rem; color: #5b7fa6; margin-bottom: 4px; }
 
 .hint { font-weight: 600; margin-bottom: 10px; }
 .hint.small { margin: 6px 0 10px; }
 
-.palette { display: flex; gap: 12px; justify-content: center; margin-bottom: 10px; }
+/* level buttons */
+.levels { display: flex; gap: 8px; justify-content: center; margin-bottom: 8px; flex-wrap: wrap; }
+.lvl { width: 38px; height: 38px; padding: 0; border-radius: 50%; background: #fff; color: #5b7fa6; border: 3px solid #fff; box-shadow: 0 3px 10px rgba(91,127,166,0.2); }
+.lvl:hover { background: #ffe3f1; }
+.lvl.active { border-color: #ff7eb6; }
+.lvl.locked { cursor: not-allowed; }
+.lvl img { width: 28px; height: 28px; object-fit: contain; display: block; margin: auto; }
 
+/* threads */
+.palette { display: flex; gap: 10px; justify-content: center; margin-bottom: 10px; flex-wrap: wrap; }
 .swatch {
   display: flex;
   align-items: center;
@@ -49,25 +61,40 @@ h1 {
   cursor: pointer;
   box-shadow: 0 3px 10px rgba(91, 127, 166, 0.2);
 }
-.swatch .dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; }
+.swatch:hover { background: #fff; }
+.swatch .dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; color: rgba(60, 90, 130, 0.8); }
 .swatch.active { border-color: #ff7eb6; }
 .swatch.finished { opacity: 0.5; }
 
-.board { position: relative; display: inline-block; }
-
-canvas {
-  width: min(520px, 92vw, calc(48vh * 520 / 560));
-  height: auto;
-  aspect-ratio: 520 / 560;
+/* cloth */
+.stage {
+  --base: min(520px, 92vw, calc(50vh * 520 / 560));
+  position: relative;
+  width: var(--base);
+  margin: 0 auto;
+}
+.board {
+  --zoom: 1;
+  width: 100%;
   border-radius: 20px;
   border: 5px solid #fff;
   box-shadow: 0 10px 30px rgba(91, 127, 166, 0.3);
+  background: #fff;
+  overflow: hidden;
+}
+.board.zoomed { overflow: auto; max-height: calc(var(--base) * 1.08); }
+#cloth {
+  display: block;
+  width: calc(100% * var(--zoom));
+  height: auto;
   cursor: crosshair;
   touch-action: none;
-  background: #fff;
 }
+#cloth.has-needle { cursor: none; }
+.board.moving #cloth { cursor: grab; }
+#cloth.grabbing { cursor: grabbing; }
 
-
+/* progress */
 .bar {
   width: min(520px, 92vw);
   height: 12px;
@@ -78,8 +105,7 @@ canvas {
 }
 .fill { height: 100%; width: 0; background: linear-gradient(90deg, #8fd0ff, #ff9ec4); transition: width 0.15s; }
 
-.tools { display: flex; gap: 10px; justify-content: center; }
-
+/* buttons */
 button {
   padding: 8px 18px;
   border: none;
@@ -91,19 +117,12 @@ button {
 }
 button:hover { background: #ff5fa5; }
 
-.levels { display: flex; gap: 8px; justify-content: center; margin-bottom: 8px; flex-wrap: wrap; }
-.lvl { width: 38px; height: 38px; padding: 0; border-radius: 50%; background: #fff; color: #5b7fa6; border: 3px solid #fff; box-shadow: 0 3px 10px rgba(91,127,166,0.2); }
-.lvl:hover { background: #ffe3f1; }
-.lvl.active { border-color: #ff7eb6; }
-.lvl.locked { cursor: not-allowed; }
-.lvl img { width: 28px; height: 28px; object-fit: contain; display: block; margin: auto; }
-h2 { font-size: 1.1rem; color: #5b7fa6; margin-bottom: 4px; }
-.swatch .dot { display: inline-flex; align-items: center; justify-content: center; font-size: 12px; color: rgba(60, 90, 130, 0.8); }
 
 /* finish card sits below the cloth so it never covers the stitching */
 .done {
-  margin-top: 14px;
-  padding: 10px 16px;
+  width: min(520px, 92vw);
+  margin: 14px auto 0;
+  padding: 22px 18px 24px;
   border-radius: 20px;
   background: #fff;
   box-shadow: 0 6px 18px rgba(91, 127, 166, 0.2);
@@ -111,15 +130,15 @@ h2 { font-size: 1.1rem; color: #5b7fa6; margin-bottom: 4px; }
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 8px 12px;
+  gap: 10px 14px;
   font-weight: 800;
 }
 .done[hidden] { display: none; }
-.done img { width: 84px; border-radius: 12px; }
-.done p { flex: 1 1 auto; text-align: left; }
+.done img { width: 150px; height: 150px; object-fit: contain; padding: 6px; border-radius: 50%; border: 4px solid #bfe3ff; background: #fff; box-shadow: 0 6px 16px rgba(91, 127, 166, 0.3); }
+.done p { flex: 1 1 100%; text-align: center; margin: 10px 0 14px; }
+.done button[hidden] { display: none; }
 
 /* intro screen */
-#game[hidden] { display: none; }
 #intro {
   position: fixed; inset: 0; z-index: 10;
   display: flex; align-items: center; justify-content: center;
@@ -156,3 +175,116 @@ h2 { font-size: 1.1rem; color: #5b7fa6; margin-bottom: 4px; }
 @keyframes introDrift { to { transform: translateX(calc(100vw + 400px)); } }
 @keyframes introBob { 50% { transform: translateY(-8px); } }
 @keyframes introPulse { 50% { transform: scale(1.06); } }
+
+/* gallery */
+#gallery {
+  position: fixed; inset: 0; z-index: 20;
+  background: rgba(91, 127, 166, 0.35);
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+}
+#gallery[hidden] { display: none; }
+.gallery-box {
+  position: relative; width: min(760px, 100%); max-height: 88vh; overflow: auto;
+  background: #fff; border-radius: 28px; padding: 24px 22px 26px; text-align: center;
+  box-shadow: 0 16px 50px rgba(91, 127, 166, 0.45);
+}
+.gallery-box h2 { font-family: 'Press Start 2P', monospace; font-size: 1rem; color: #ff7eb6; margin-bottom: 16px; }
+.gallery-close { position: absolute; top: 12px; right: 14px; width: 34px; height: 34px; padding: 0; font-size: 1.3rem; line-height: 1; }
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+.gcard {
+  background: #f4f9ff; border: 3px solid #fff; border-radius: 20px; padding: 10px 8px 12px;
+  box-shadow: 0 4px 14px rgba(91, 127, 166, 0.2); cursor: pointer; color: #5b7fa6;
+  display: flex; flex-direction: column; align-items: center; gap: 6px; font: 800 0.8rem 'Nunito', sans-serif;
+}
+.gcard:hover { background: #ffe3f1; }
+.gcard.complete { border-color: #ff9ec4; }
+.gcard.locked { cursor: not-allowed; opacity: 0.8; }
+.gcard canvas { width: 130px; height: 130px; object-fit: contain; border-radius: 12px; background: #eaf2fb; }
+.gcard img { width: 60px; height: 60px; margin: 35px 0; }
+.gcard .pct { color: #ff7eb6; }
+
+/* mascot */
+#mascot { position: fixed; left: 12px; bottom: 12px; z-index: 5; display: flex; align-items: flex-end; gap: 8px; pointer-events: none; }
+#mascot[hidden] { display: none; }
+#mascot img { width: 84px; height: 84px; object-fit: cover; border-radius: 50%; border: 4px solid #bfe3ff; background: #fff; box-shadow: 0 6px 16px rgba(91, 127, 166, 0.3); animation: introBob 3s ease-in-out infinite; }
+.bubble {
+  max-width: 190px; padding: 8px 12px; border-radius: 16px 16px 16px 4px; background: #fff;
+  font-weight: 800; font-size: 0.8rem; box-shadow: 0 4px 14px rgba(91, 127, 166, 0.3);
+  opacity: 0; transform: translateY(6px); transition: opacity 0.25s, transform 0.25s;
+}
+.bubble.show { opacity: 1; transform: none; }
+
+/* needle cursor */
+#needle { position: fixed; z-index: 6; pointer-events: none; left: 0; top: 0; }
+#needle[hidden] { display: none; }
+
+#fx { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 30; pointer-events: none; }
+
+@media (max-width: 600px) {
+  body { align-items: flex-start; }
+  .wrap { padding: 66px 8px 90px; }
+  h1 { font-size: 1rem; }
+  .back { top: 10px; left: 12px; font-size: 0.85rem; }
+  .intro-card { padding: 22px 22px 26px; }
+  .intro-title { font-size: 1.05rem; }
+  .swatch { font-size: 0.78rem; padding: 4px 10px 4px 6px; }
+  .swatch .dot { width: 18px; height: 18px; font-size: 10px; }
+  .lvl { width: 34px; height: 34px; }
+  .action { min-width: 112px; padding: 10px 18px; }
+  .topicons { top: 8px; right: 8px; gap: 2px; }
+  .done { padding: 10px; }
+  .done img { width: 124px; height: 124px; padding: 5px; }
+  #mascot img { width: 64px; height: 64px; border-width: 3px; }
+  .bubble { max-width: 150px; font-size: 0.72rem; }
+}
+
+.gcard img, .lvl img { mix-blend-mode: multiply; }
+
+/* round icon buttons */
+.iconbtn {
+  width: 42px; height: 42px; padding: 0; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #fff; color: #5b7fa6; box-shadow: 0 3px 10px rgba(91, 127, 166, 0.28);
+}
+.iconbtn:hover { background: #ffe3f1; color: #ff5fa5; }
+.iconbtn.on { background: #ff7eb6; color: #fff; }
+.iconbtn[hidden] { display: none; }
+.iconbtn .slash { display: none; }
+.iconbtn.off { opacity: 0.7; }
+.iconbtn.off .slash { display: block; }
+.iconbtn:focus-visible, .action:focus-visible, .chip:focus-visible { outline: 3px solid #ff7eb6; outline-offset: 2px; }
+
+/* sound, music and gallery live in the corner like most web games */
+.topicons {
+  position: fixed; top: 12px; right: 14px; z-index: 4;
+  display: flex; gap: 8px; padding: 5px 8px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7); box-shadow: 0 4px 14px rgba(91, 127, 166, 0.2);
+}
+.topicons .iconbtn { width: 38px; height: 38px; box-shadow: none; background: transparent; }
+.topicons .iconbtn:hover { background: #ffe3f1; }
+
+/* zoom and hand tool float on the corner of the cloth, like a map */
+.zoomctl { position: absolute; top: 12px; right: 12px; z-index: 3; display: flex; flex-direction: column; gap: 8px; }
+.zoomctl .iconbtn { width: 40px; height: 40px; }
+
+/* main actions */
+.actions { display: flex; gap: 12px; justify-content: center; margin-top: 12px; }
+.action {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-width: 128px; padding: 11px 22px; font-size: 1rem;
+  background: #fff; color: #5b7fa6; box-shadow: 0 4px 14px rgba(91, 127, 166, 0.25);
+}
+.action:hover { background: #ff7eb6; color: #fff; }
+
+/* secondary actions: soft pill chips under the main buttons */
+.chips { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+.chip {
+  display: inline-flex; align-items: center; gap: 7px; padding: 7px 16px; font-size: 0.82rem;
+  background: rgba(255, 255, 255, 0.55); color: #5b7fa6; border: 2px solid #fff;
+  box-shadow: 0 2px 8px rgba(91, 127, 166, 0.15);
+}
+.chip:hover { background: #fff; color: #ff5fa5; }
+.chip .slash { display: none; }
+.chip.off .slash { display: block; }
+.chip.armed { background: #ffe3f1; color: #d9548f; border-color: #ff9ec4; }

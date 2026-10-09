@@ -27,6 +27,11 @@
   </div>
 
   <div class="wrap" id="game" hidden>
+    <div class="topicons">
+      <button class="iconbtn" id="galleryBtn" title="My stitches" aria-label="My stitches (gallery)"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M4 18l5-5 4 4 3-3 4 4"/></svg></button>
+      <button class="iconbtn" id="sfxBtn" title="Sound effects" aria-label="Sound effects" aria-pressed="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9a4 4 0 0 1 0 6"/><path d="M18.5 6.5a8 8 0 0 1 0 11"/><line class="slash" x1="4" y1="4" x2="20" y2="20"/></svg></button>
+      <button class="iconbtn" id="musicBtn" title="Music" aria-label="Music" aria-pressed="false"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/><line class="slash" x1="4" y1="4" x2="20" y2="20"/></svg></button>
+    </div>
     <h1>Cross Stitch</h1>
     <div class="levels" id="levels"></div>
     <h2 id="levelTitle"></h2>
@@ -34,23 +39,57 @@
 
     <div class="palette" id="palette"></div>
 
-    <div class="board">
-      <canvas id="cloth" width="520" height="560"></canvas>
-      <div class="done" id="done" hidden>
-        <img src="gifs/greaaatt.gif" alt="Great!" />
-        <p>All stitched! Cinnamoroll says thank you</p>
-        <button id="next">next level</button>
-        <button id="again">stitch again</button>
+    <div class="stage" id="stage">
+      <div class="board" id="board">
+        <canvas id="cloth" width="520" height="560"></canvas>
       </div>
+      <div class="zoomctl">
+        <button class="iconbtn" id="zoomIn" title="Zoom in" aria-label="Zoom in"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+        <button class="iconbtn" id="zoomOut" title="Zoom out" aria-label="Zoom out"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/></svg></button>
+        <button class="iconbtn" id="moveBtn" title="Hand tool: drag to move the zoomed cloth" aria-label="Hand tool" aria-pressed="false" hidden><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></svg></button>
+      </div>
+    </div>
+
+    <div class="done" id="done" hidden>
+      <img src="gifs/greaaatt.gif" alt="Great!" />
+      <p>All stitched! Cinnamoroll says thank you</p>
+      <button id="next">next level</button>
+      <button id="savePic">save picture</button>
+      <button id="again">stitch again</button>
     </div>
 
     <div class="bar"><div class="fill" id="fill"></div></div>
     <p class="hint small"><span id="count">0</span> / <span id="total">0</span> stitches</p>
 
-    <div class="tools">
-      <button id="hintBtn">hide guide</button>
-      <button id="reset">start over</button>
+    <div class="actions">
+      <button class="action" id="hintMe"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></svg><span>hint</span></button>
+      <button class="action" id="undo"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg><span>undo</span></button>
     </div>
+    <div class="chips">
+      <button class="chip" id="hintBtn" aria-pressed="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><line class="slash" x1="4" y1="4" x2="20" y2="20"/></svg><span id="guideLabel">hide guide</span></button>
+      <button class="chip" id="reset"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg><span id="resetLabel">start over</span></button>
+    </div>
+  </div>
+
+  <div id="gallery" hidden>
+    <div class="gallery-box">
+      <button class="gallery-close" id="galleryClose" aria-label="close">&times;</button>
+      <h2>My Stitches</h2>
+      <div class="gallery-grid" id="galleryGrid"></div>
+    </div>
+  </div>
+
+  <div id="mascot" hidden>
+    <img src="gifs/cinnamoroll-main.webp" alt="" />
+    <div class="bubble" id="bubble"></div>
+  </div>
+
+  <div id="needle" hidden>
+    <svg viewBox="0 0 34 34" width="34" height="34" aria-hidden="true">
+      <path id="needleThread" d="M27 6 C 34 1, 34 14, 23 13" fill="none" stroke="#6cc3f7" stroke-width="2.4" stroke-linecap="round"/>
+      <line x1="3" y1="31" x2="26" y2="8" stroke="#9aa9bf" stroke-width="2.6" stroke-linecap="round"/>
+      <ellipse cx="25.5" cy="8.5" rx="1.2" ry="2.6" transform="rotate(45 25.5 8.5)" fill="#fff"/>
+    </svg>
   </div>
 
   <script src="js/stitch-levels.js"></script>
