@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cinnamoroll Cross Stitch</title>
+  <link rel="icon" href="gifs/cinnamoroll-kawaii.webp" type="image/webp" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/cross-stitch.css" />
+</head>
+<body>
+
+  <div id="intro">
+    <div class="intro-cloud c1"></div><div class="intro-cloud c2"></div><div class="intro-cloud c3"></div>
+    <div class="intro-card">
+      <img class="intro-gif" src="gifs/cinnamoroll-hi.gif" alt="Cinnamoroll waving" />
+      <h1 class="intro-title">Cinnamoroll<br />Cross Stitch</h1>
+      <p class="intro-sub">a tiny, cozy game. no timers, no pressure.</p>
+      <button id="play" class="intro-play">play</button>
+      <button id="howBtn" class="intro-how">how to play</button>
+      <ol class="intro-steps" id="steps" hidden>
+        <li>Pick a thread color.</li>
+        <li>Click or drag on the cloth where the matching symbol is.</li>
+        <li>Finish the picture to unlock the next level.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="wrap" id="game" hidden>
+    <h1>Cross Stitch</h1>
+    <div class="levels" id="levels"></div>
+    <h2 id="levelTitle"></h2>
+    <p class="hint">Pick a thread, then click or drag on the cloth. Match the symbols!</p>
+
+    <div class="palette" id="palette"></div>
+
+    <div class="board">
+      <canvas id="cloth" width="520" height="560"></canvas>
+      <div class="done" id="done" hidden>
+        <img src="gifs/greaaatt.gif" alt="Great!" />
+        <p>All stitched! Cinnamoroll says thank you</p>
+        <button id="next">next level</button>
+        <button id="again">stitch again</button>
+      </div>
+    </div>
+
+    <div class="bar"><div class="fill" id="fill"></div></div>
+    <p class="hint small"><span id="count">0</span> / <span id="total">0</span> stitches</p>
+
+    <div class="tools">
+      <button id="hintBtn">hide guide</button>
+      <button id="reset">start over</button>
+    </div>
+  </div>
+
+  <script src="js/stitch-levels.js"></script>
+  <script src="js/cross-stitch.js"></script>
+</body>
+</html>
